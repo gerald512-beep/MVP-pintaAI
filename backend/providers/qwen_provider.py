@@ -30,7 +30,7 @@ def generate(
     image_data_url = f"data:{mime};base64,{encoded}"
 
     payload = {
-        "model": model or os.getenv("QWEN_MODEL", "qwen-image-2.0-pro"),
+        "model": model or os.getenv("QWEN_MODEL", "qwen-image-edit-plus"),
         "input": {
             "messages": [
                 {
