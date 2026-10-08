@@ -38,10 +38,16 @@ Preserve these identity traits from the original animal.
 7.[Background] {background}.
 
 Style requirements:
+- Match the uploaded photo's aspect ratio, orientation, and overall framing; preserve the original crop
 - Black line art only
-- The complete animal — head, body, legs, and tail — must be fully visible and centered in the frame
+- Keep the animal recognizable and avoid turning a portrait into a full body drawing
+- Preserve exactly what is visible in the uploaded photo (for example, head only, head and shoulders, or full body); do not invent hidden body parts
+- Keep the pose, face, body parts, fur/feathers, clothing or distinctive features recognizable
+- Keep the original composition and visible subject proportions as closely as possible
+- Zoom out if needed so the entire visible animal and scene fit comfortably
 - Minimum 10% white margin on all four sides (top, bottom, left, right)
 - Do not zoom in or crop any part of the animal
+- Make the coloring page simple enough for the selected age while preserving the reference photo’s framing
 - Printable worksheet style
 - Child-friendly cartoon look
 - All regions fully enclosed
@@ -61,6 +67,53 @@ Do not include:
 
 Important:
 Keep the animal recognizable as the same subject from the photo, especially the fur or feathers, tail, and posture. Do not include any people."""
+
+
+MYSELF_PROMPT_TEMPLATE = """Transform the uploaded photo into a printable children's coloring page.
+
+Goal:
+Create a simple black-and-white coloring-book illustration that clearly resembles the same person in the photo.
+
+Preserve these identity traits from the original person.
+
+0.[Age] Simplify the image for children ages {age} years old
+1.[Regions] Reduce the person into large rounded enclosed shapes, between {regions}.
+2. Keep the pose, clothing, face, and distinctive features recognizable.
+3.[Thickness] Use an outline thickness between {thickness}.
+4. Use very few interior detail lines.
+5. Keep large open white spaces for easy coloring.
+6.[Line Style] {line_style}.
+7.[Background] {background}.
+
+Style requirements:
+- Match the uploaded photo's aspect ratio, orientation, and overall framing; preserve the original crop
+- Black line art only
+- Keep the person recognizable and avoid turning the portrait into an animal, baby, mascot, or caricature
+- Preserve exactly what is visible in the uploaded photo (for example, head and shoulders); do not invent hidden body parts
+- Keep the visible clothing, face, hairstyle, expression, pose, and subject proportions recognizable
+- Keep the original composition and framing as closely as possible
+- Preserve the source image's natural crop rather than inventing body parts that are not visible
+- Minimum 10% white margin on all four sides (top, bottom, left, right)
+- Do not zoom in or crop any part of the person
+- Printable worksheet style
+- Child-friendly cartoon look
+- All regions fully enclosed
+- High clarity and clean composition
+
+Do not include:
+- Additional people
+- Shadows
+- Gray tones
+- Color
+- Gradients
+- Textures
+- Crosshatching
+- Sketch lines
+- Open outlines
+- Decorative borders
+
+Important:
+Keep the person recognizable as the same subject from the photo, especially the face, hair, clothing, and posture. Do not include additional people."""
 
 
 def resolve_config(
@@ -85,6 +138,9 @@ def build_prompt(
     thickness: str = "",
     line_style: str = "",
     background: str = "",
+    topic: str = "animal",
 ) -> str:
     cfg = resolve_config(age, regions, thickness, line_style, background)
+    if topic == "myself":
+        return MYSELF_PROMPT_TEMPLATE.format(age=age, **cfg)
     return PROMPT_TEMPLATE.format(age=age, **cfg)

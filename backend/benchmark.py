@@ -56,7 +56,7 @@ def main() -> None:
     parser.add_argument("--input-dir", default=str(ROOT / "benchmark" / "inputs"))
     parser.add_argument("--output-dir", default=str(ROOT / "benchmark" / "outputs"))
     parser.add_argument("--limit", type=int, default=None)
-    parser.add_argument("--size", default="1024x1024")
+    parser.add_argument("--size", default="")
     args = parser.parse_args()
 
     load_dotenv(ROOT / ".env")

@@ -36,6 +36,7 @@ def health():
 @app.get("/api/prompt-preview")
 def prompt_preview(
     age: str,
+    topic: str = "animal",
     regions: str = "",
     thickness: str = "",
     line_style: str = "",
@@ -44,7 +45,7 @@ def prompt_preview(
     if age not in AGE_CONFIG:
         raise HTTPException(status_code=400, detail=f"Invalid age '{age}'")
     cfg = resolve_config(age, regions, thickness, line_style, background)
-    prompt = build_prompt(age=age, **cfg)
+    prompt = build_prompt(age=age, topic=topic, **cfg)
     return {"prompt": prompt}
 
 
@@ -65,7 +66,7 @@ async def generate(
 
     cfg = resolve_config(age, regions, thickness, line_style, background)
     logger.info("Config used: %s", cfg)
-    prompt = build_prompt(age=age, **cfg)
+    prompt = build_prompt(age=age, topic=topic, **cfg)
     logger.info("Assembled prompt:\n%s", prompt)
 
     image_bytes = await image.read()
@@ -80,7 +81,7 @@ async def generate(
             image_bytes=image_bytes,
             content_type=image.content_type or "image/png",
             model=model or None,
-            size="1024x1024",
+            size=os.getenv("QWEN_SIZE", ""),
         )
         logger.info("%s API call succeeded", provider)
     except Exception as exc:

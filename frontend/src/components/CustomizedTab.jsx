@@ -118,7 +118,7 @@ export default function CustomizedTab({
       <div>
         <div className="flex items-baseline gap-2 mb-2">
           <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t.sectionTopic}</p>
-          <span className="text-xs text-gray-400 italic">{t.topicOnlyAnimal}</span>
+          <span className="text-xs text-gray-400 italic">Animal or Myself</span>
         </div>
         <div className="flex gap-2">
           {/* Animal */}
@@ -133,22 +133,21 @@ export default function CustomizedTab({
             {t.topicAnimal}
           </button>
 
-          {/* Myself — disabled */}
-          <div className="relative group">
-            <button
-              disabled
-              className="px-4 py-2 rounded-full border border-gray-200 bg-gray-100 text-gray-400 text-sm font-medium cursor-not-allowed"
-            >
-              {t.topicMyself}
-            </button>
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 rounded bg-gray-800 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              {t.comingSoon}
-            </span>
-          </div>
+          {/* Myself */}
+          <button
+            onClick={() => handleTopicSelect('myself')}
+            className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
+              topic === 'myself'
+                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+            }`}
+          >
+            {t.topicMyself}
+          </button>
         </div>
 
-        {/* File upload — only shown after topic is selected */}
-        {topic === 'animal' && (
+        {/* File upload — shown after a topic is selected */}
+        {topic && (
           <div className="mt-3">
             <input
               ref={fileInputRef}

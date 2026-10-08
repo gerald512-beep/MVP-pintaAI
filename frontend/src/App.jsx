@@ -21,6 +21,7 @@ export default function App() {
   async function onGenerate() {
     const params = new URLSearchParams({
       age,
+      topic,
       regions: customConfig.regions,
       thickness: customConfig.thickness,
       line_style: customConfig.lineStyle,

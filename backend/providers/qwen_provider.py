@@ -3,6 +3,8 @@ import os
 import mimetypes
 from typing import Optional
 
+from io import BytesIO
+
 import requests
 
 from .base import ProviderResult
@@ -29,6 +31,31 @@ def generate(
     encoded = base64.b64encode(image_bytes).decode("utf-8")
     image_data_url = f"data:{mime};base64,{encoded}"
 
+    if size:
+        requested_size = size.replace("x", "*")
+    else:
+        try:
+            from PIL import Image
+            from math import log
+
+            with Image.open(BytesIO(image_bytes)) as im:
+                src_w, src_h = im.size
+            target_ratio = src_w / src_h
+            best_error = float("inf")
+            best_size = "1024*1024"
+            for width in range(512, 2049, 16):
+                for height in range(512, 2049, 16):
+                    ratio_error = abs(log((width / height) / target_ratio))
+                    area_error = abs((width * height) / (1024 * 1024) - 1)
+                    # Ratio fidelity is the priority; keep output near the model's normal 1K quality.
+                    score = ratio_error * 100 + area_error * 0.2
+                    if score < best_error:
+                        best_error = score
+                        best_size = f"{width}*{height}"
+            requested_size = best_size
+        except Exception:
+            requested_size = "1024*1024"
+
     payload = {
         "model": model or os.getenv("QWEN_MODEL", "qwen-image-edit-plus"),
         "input": {
@@ -47,7 +74,7 @@ def generate(
             "negative_prompt": " ",
             "prompt_extend": True,
             "watermark": False,
-            "size": size.replace("x", "*"),
+            "size": requested_size,
         },
     }
 
