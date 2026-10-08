@@ -1,9 +1,18 @@
 services:
   - type: web
     name: pintaai
-    env: python
-    buildCommand: pip install -r backend/requirements.txt && cd frontend && npm install && npm run build
-    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     envVars:
-      - key: OPENAI_API_KEY
+      - key: IMAGE_PROVIDER
+        value: qwen
+      - key: IMAGE_MODEL
+        value: qwen-image-edit-plus
+      - key: QWEN_MODEL
+        value: qwen-image-edit-plus
+      - key: DASHSCOPE_API_KEY
+        sync: false
+      - key: DASHSCOPE_BASE_URL
         sync: false
